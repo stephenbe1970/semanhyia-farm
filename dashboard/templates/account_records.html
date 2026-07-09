@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4 class="text-white mb-4">Account details</h4>
+
+<div class="d-flex mb-3">
+    <button class="btn btn-link text-white text-decoration-none" onclick="showTab('payment')">Payment</button>
+    <button class="btn btn-link text-white text-decoration-none" onclick="showTab('withdrawal')">Withdrawal</button>
+</div>
+
+<div id="payment-tab" class="record-tab" style="display:block;">
+    {% for p in payments %}
+    <div class="card mb-3 p-3" style="background:#2b3035; border-radius:8px; border:none;">
+        <div class="fw-bold text-white">Recharge/Credit</div>
+        <div class="small text-secondary">{{ p.timestamp|date:"d M Y, H:i" }}</div>
+        
+        <div class="fw-bold 
+            {% if p.status == 'completed' %} text-success 
+            {% elif p.status == 'pending' %} text-warning 
+            {% else %} text-white 
+            {% endif %}">
+            {{ p.status|title }} | GHS {{ p.amount|floatformat:2 }}
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-secondary text-center mt-5">No payment records found.</p>
+    {% endfor %}
+</div>
+
+<div id="withdrawal-tab" class="record-tab" style="display:none;">
+    {% for w in withdrawals %}
+    <div class="card mb-3 p-3" style="background:#2b3035; border:none; border-radius:8px;">
+        <div class="fw-bold text-white">Withdrawal</div>
+        <div class="text-secondary small">{{ w.timestamp|date:"d M Y, H:i" }}</div>
+        
+        <div class="fw-bold 
+            {% if w.status == 'completed' %} text-success 
+            {% elif w.status == 'pending' %} text-warning 
+            {% else %} text-white 
+            {% endif %}">
+            {{ w.status|title }} | GHS {{ w.amount|floatformat:2 }}
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-secondary text-center mt-5">No withdrawal records found.</p>
+    {% endfor %}
+</div>
+
+<script>
+function showTab(tab) {
+    document.getElementById('payment-tab').style.display = (tab === 'payment') ? 'block' : 'none';
+    document.getElementById('withdrawal-tab').style.display = (tab === 'withdrawal') ? 'block' : 'none';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Use the same header style as your dashboard -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white m-0"><i class="bi bi-star-fill text-warning"></i> My Team</h2>
+    <a href="{% url 'team_details' %}" class="btn btn-sm btn-outline-light">My team ></a>
+</div>
+
+<!-- Invitation Card - styled like your dashboard cards -->
+<div class="card bg-dark border-secondary p-3 mb-4" style="border-radius: 10px;">
+    <label class="text-white mb-2">Invitation Code: <strong>{{ invitation_code }}</strong></label>
+    <div class="input-group mb-2">
+        <input type="text" id="referralLink" class="form-control bg-dark text-white border-secondary" 
+               value="{{ request.scheme }}://{{ request.get_host }}/register?ref={{ invitation_code }}" readonly>
+    </div>
+    <button class="btn btn-success w-100" onclick="copyToClipboard()">📋 Click to Copy Link</button>
+</div>
+
+<!-- Team Levels as styled cards -->
+<div class="row g-2">
+    <div class="col-12">
+        <div class="card p-3 mb-2" style="background: #2b3035; border: none; border-radius: 10px;">
+            <div class="d-flex justify-content-between text-white">
+                <span class="fw-bold">L1 (30%)</span>
+                <span>Guests: {{ l1_count }} | Income: <strong class="text-success">GHS {{ l1_income|floatformat:2 }}</strong></span>
+            </div>
+        </div>
+        <div class="card p-3 mb-2" style="background: #2b3035; border: none; border-radius: 10px;">
+            <div class="d-flex justify-content-between text-white">
+                <span class="fw-bold">L2 (2%)</span>
+                <span>Guests: {{ l2_count }} | Income: <strong class="text-success">GHS {{ l2_income|floatformat:2 }}</strong></span>
+            </div>
+        </div>
+        <div class="card p-3 mb-2" style="background: #2b3035; border: none; border-radius: 10px;">
+            <div class="d-flex justify-content-between text-white">
+                <span class="fw-bold">L3 (1%)</span>
+                <span>Guests: {{ l3_count }} | Income: <strong class="text-success">GHS {{ l3_income|floatformat:2 }}</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Section -->
+<div class="row text-white text-center mt-3">
+    <div class="col-6">
+        <div class="text-secondary small">Number of guests</div>
+        <h4 class="fw-bold">{{ total_guests }}</h4>
+    </div>
+    <div class="col-6">
+        <div class="text-secondary small">Invited income</div>
+        <h4 class="fw-bold text-success">GHS {{ total_commission|floatformat:2 }}</h4>
+    </div>
+</div>
+
+<div class="text-secondary small mt-3 border-top border-secondary pt-3">
+    <strong>| Invitation bonus</strong><br>
+    When a friend you invite signs up and invests, you receive a 30% cash reward. 
+    Level 2 and 3 team investments yield 2% and 1% bonuses respectively.
+</div>
+
+<script>
+function copyToClipboard() {
+    var copyText = document.getElementById("referralLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); 
+    navigator.clipboard.writeText(copyText.value);
+    
+    var btn = event.target;
+    var originalText = btn.innerText;
+    btn.innerText = "Copied!";
+    setTimeout(() => { btn.innerText = originalText; }, 2000);
+}
+</script>
+{% endblock %}

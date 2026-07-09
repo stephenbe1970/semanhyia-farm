@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-white"><i class="bi bi-info-circle-fill text-warning"></i> About Us</h2>
+</div>
+
+{% load static %} <div class="mb-4">
+    <img src="{% static 'images/image.avif' %}" alt="Semanhyia Farms" class="w-100 rounded shadow">
+</div>
+
+<div class="text-white">
+    <h4 class="text-success">Semanhyia Farms</h4>
+    <p>
+        Welcome to <strong>Semanhyia Farms</strong>, a forward-thinking agricultural investment platform dedicated to bridging the gap between innovative farming practices and sustainable financial growth.
+    </p>
+
+    <h5 class="mt-4">Why Choose Semanhyia Farms?</h5>
+    <ul class="text-white-50">
+        <li><strong>Sustainability</strong>: We prioritize long-term productivity and environmental stewardship.</li>
+        <li><strong>Transparency</strong>: We provide a clear, structured investment environment.</li>
+        <li><strong>Innovation</strong>: We use digital tools to streamline your investment experience.</li>
+        <li><strong>Community-Driven</strong>: Join a community invested in the modernization of agriculture.</li>
+    </ul>
+
+    <p>
+        We are proud to be at the forefront of this digital agricultural transformation in Ghana. Join us today and become a part of the Semanhyia Farms success story.
+    </p>
+</div>
+{% endblock %}

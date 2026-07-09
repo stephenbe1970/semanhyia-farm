@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-white"><i class="bi bi-list-check text-warning"></i> Platform Rules</h2>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-dark table-bordered border-success align-middle">
+        <thead class="table-success text-success">
+            <tr>
+                <th>VIP</th>
+                <th>Invest</th>
+                <th>Daily</th>
+                <th>Cycle</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vip in vips %}
+            <tr>
+                <td>{{ vip.name }}</td>
+                <td>{{ vip.price }}</td>
+                <td>{{ vip.daily }}</td>
+                <td>{{ vip.cycle }}</td>
+                <td>{{ vip.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card bg-dark border-secondary p-3 mt-4 text-white">
+    <h5 class="text-success">Investment Rules Description:</h5>
+    <ul class="text-white-50">
+        <li>Each VIP tier represents a specific investment level.</li>
+        <li>Your <strong>Daily Income</strong> is credited automatically based on the cycle duration.</li>
+        <li>The <strong>Total Income</strong> reflects the cumulative earnings over the full 180-day cycle.</li>
+    </ul>
+</div>
+{% endblock %}

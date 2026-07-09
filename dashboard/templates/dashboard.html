@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h4 class="text-center mb-2">🐄 Semanhyia Farms</h4>
+
+<div class="card balance-card mb-3" style="position: relative; overflow: hidden; border-radius: 15px; border: none; height: 100px;">
+    <img src="{% static 'images/image.avif' %}" alt="Background" 
+         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+    
+    <div class="balance-content p-3" style="position: relative; z-index: 1; background: rgba(25, 135, 84, 0.7); height: 100%; display: flex; align-items: center;">
+        <div class="row text-white text-center w-100">
+            <div class="col-6" style="border-right: 1px solid rgba(255,255,255,0.3);">
+                <p class="small mb-0 opacity-75">Mobile</p>
+                <h6 class="mb-0 fw-bold">{{ user_mobile }}</h6>
+            </div>
+            <div class="col-6">
+                <p class="small mb-0 opacity-75">Balance</p>
+                <h6 class="mb-0 fw-bold">GHS {{ balance|floatformat:2 }}</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-2 mb-4">
+    <div class="col-4">
+        <a href="{% url 'recharge' %}" class="btn btn-success w-100 py-2 fw-bold shadow-sm"><i class="bi bi-plus-lg"></i><br>Recharge</a>
+    </div>
+    <div class="col-4">
+        <a href="{% url 'withdraw' %}" class="btn btn-warning w-100 py-2 fw-bold shadow-sm"><i class="bi bi-cash-stack"></i><br>Withdraw</a>
+    </div>
+    <div class="col-4">
+        <a href="{% url 'customer_service' %}" class="btn btn-info w-100 py-2 fw-bold shadow-sm text-white"><i class="bi bi-headset"></i><br>Service</a>
+    </div>
+</div>
+
+<h6 class="mb-2">Projects</h6>
+<div class="grid-wrapper">
+    <div class="row g-2 w-100">
+        {% for vip in vips %}
+        <div class="col-6">
+            <div class="vip-card text-start border p-2 rounded" style="background: #2b3035;">
+                <strong style="font-size: 0.7rem; display: block; color: #fff;">{{ vip.name }}</strong>
+                <span style="font-size: 0.65rem; color: #ffcc00; font-weight: bold;">{{ vip.price }}</span>
+                <p class="mb-0" style="font-size: 0.6rem; color: #00ff00;">{{ vip.daily }}</p>
+                <p class="mb-1" style="font-size: 0.6rem; color: #ccc;">{{ vip.cycle }}</p>
+                <button type="button" class="btn btn-success btn-sm w-100 py-0" 
+                        onclick="buyVIP('{{ vip.name }}')" {% if vip.disabled %}disabled{% endif %}>
+                    {% if vip.disabled %}Coming soon{% else %}Buy{% endif %}
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function buyVIP(vipName) {
+        if(!confirm(`Confirm purchase of ${vipName}?`)) return;
+        fetch(`/buy-vip/${vipName}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message); 
+            if(data.status === 'success') { location.reload(); }
+        })
+        .catch(error => { console.error('Error:', error); alert('An error occurred.'); });
+    }
+</script>
+{% endblock %}

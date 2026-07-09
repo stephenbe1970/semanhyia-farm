@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Withdrawal</title>
+    <style>
+        html, body { height: 100%; margin: 0; overflow: hidden; background-color: #212529; }
+        .mobile-container { max-width: 500px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; padding: 10px; padding-bottom: 90px; }
+        .content-wrapper { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
+        body, h4, h6, p, span, strong, label, .nav-link-custom { color: #ffffff !important; }
+        .btn-custom-green { background-color: #198754 !important; border: 1px solid #198754 !important; color: #ffffff !important; font-weight: 500; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto; width: 100%; max-width: 500px; height: 70px; background: #222; border-top: 1px solid #444; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-link-custom { color: #fff; font-size: 0.70rem; text-decoration: none; display: flex; flex-direction: column; align-items: center; }
+    </style>
+</head>
+<body class="bg-dark text-white">
+
+<div class="mobile-container">
+    <div class="content-wrapper">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <h4 class="mb-3">Withdrawal</h4>
+
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <div class="card p-2 text-white" style="background-color: #198754; border: none;">
+                    <p class="small mb-0">Account balance</p>
+                    <strong>GHS {{ balance|floatformat:2 }}</strong>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card p-2 text-white" style="background-color: #198754; border: none;">
+                    <p class="small mb-0">Total Withdrawn</p>
+                    <strong>GHS {{ total_withdrawn|floatformat:2 }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" id="withdrawForm">
+            {% csrf_token %}
+            <label class="small mb-1">Withdrawal account</label>
+            {% if bank_info %}
+                <div class="p-2 mb-3 bg-secondary text-white rounded" style="font-size: 0.9rem;">
+                    {{ bank_info.network_name }}: {{ bank_info.account_number }} ({{ bank_info.real_name }})
+                </div>
+            {% else %}
+                <div class="p-2 mb-3 bg-warning text-dark rounded" style="font-size: 0.9rem;">
+                    No account details found. <a href="{% url 'bank_management' %}" class="text-dark fw-bold">Click here</a>
+                </div>
+            {% endif %}
+            
+            <label class="small mb-1">Withdrawal amount (GHS)</label>
+            <input type="number" name="amount" id="amountInput" class="form-control bg-dark text-white border-secondary mb-1" oninput="validateAndCalculate(this.value)" required>
+            <p id="errorMsg" class="text-danger small mb-0" style="display: none;"></p>
+            <p id="taxResult" class="text-white-50 mb-3" style="font-size: 0.8rem;"></p>
+
+            {% if bank_info %}
+                <button type="submit" class="btn btn-custom-green w-100 mb-3">Withdraw money now</button>
+            {% else %}
+                <button type="button" class="btn btn-secondary w-100 mb-3" disabled>Add account to withdraw</button>
+            {% endif %}
+        </form>
+
+        <hr class="border-secondary mt-4">
+        <h6 class="text-white mb-3">Withdrawal History</h6>
+        {% for t in withdrawals %}
+        <div class="card p-3 mb-2" style="background:#2b3035; border-radius:8px;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">Withdrawal</div>
+                    <small class="text-secondary">{{ t.timestamp|date:"Y-m-d H:i:s" }}</small>
+                </div>
+                <div class="text-end">
+                    <span class="fw-bold {% if t.status == 'pending' %}text-warning{% else %}text-success{% endif %}">
+                        {{ t.status|title }}
+                    </span>
+                    <div class="fw-bold">GHS {{ t.amount }}</div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-secondary small">No withdrawal history yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="{% url 'dashboard' %}" class="nav-link-custom"><i class="bi bi-house-door-fill" style="font-size: 1.2rem;"></i><div>Projects</div></a>
+    <a href="{% url 'income' %}" class="nav-link-custom"><i class="bi bi-wallet2" style="font-size: 1.2rem;"></i><div>Income</div></a>
+    <a href="{% url 'team' %}" class="nav-link-custom"><i class="bi bi-people-fill" style="font-size: 1.2rem;"></i><div>Team</div></a>
+    <a href="{% url 'mine' %}" class="nav-link-custom"><i class="bi bi-person-circle" style="font-size: 1.2rem;"></i><div>Mine</div></a>
+</nav>
+
+<script>
+    function validateAndCalculate(val) {
+        const errorMsg = document.getElementById('errorMsg');
+        const taxResult = document.getElementById('taxResult');
+        const amount = parseFloat(val);
+        if (amount > 0 && amount < 20) {
+            errorMsg.innerText = "Minimum withdrawal is GHS 20";
+            errorMsg.style.display = "block";
+        } else {
+            errorMsg.style.display = "none";
+        }
+        if (val) {
+            const finalAmount = val * 0.85;
+            taxResult.innerText = "Amount received after 15% tax: GHS " + finalAmount.toFixed(2);
+        } else {
+            taxResult.innerText = "";
+        }
+    }
+</script>
+</body>
+</html>

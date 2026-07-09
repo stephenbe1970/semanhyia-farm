@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h4 class="text-white mb-3">My Income</h4>
+
+<div class="row g-2 px-2 mb-4">
+    <div class="col-6">
+        <div style="background:linear-gradient(135deg,#006400,#000); padding:20px; border-radius:8px; color:white; text-align:center; height: 100%;">
+            <div style="font-size: 0.8rem;">Quantity purchased</div>
+            <strong style="font-size: 1.2rem;">{{ quantity_purchased|default:"0" }}</strong>
+        </div>
+    </div>
+    <div class="col-6">
+        <div style="background:linear-gradient(135deg,#006400,#000); padding:20px; border-radius:8px; color:white; text-align:center; height: 100%;">
+            <div style="font-size: 0.8rem;">My income</div>
+            <strong style="font-size: 1.2rem;">GHS {{ total_earned|floatformat:2|default:"0.00" }}</strong>
+        </div>
+    </div>
+</div>
+
+<div class="px-2">
+    <h6 class="text-secondary mb-3">Transaction History</h6>
+    {% for p in purchases %}
+    <div class="vip-card mb-3 p-3 text-white border-secondary" style="background:#2b3035; border-radius:8px;">
+        <div class="d-flex justify-content-between">
+            <span>{{ p.description }}</span>
+            <small class="text-success fw-bold">Completed</small>
+        </div>
+        
+        <div class="small text-secondary">
+            Purchased at: {{ p.timestamp|date:"M d, Y"|default:"Pending" }} 
+            at {{ p.timestamp|time:"H:i"|default:"--:--" }}
+        </div>
+        </div>
+    {% empty %}
+        <p class="text-center text-secondary mt-5">No income records found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

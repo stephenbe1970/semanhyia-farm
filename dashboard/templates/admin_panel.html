@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Control Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: white; padding-top: 50px; }
+        .table { color: white; border-color: #444; }
+        .table thead { background-color: #1e1e28; }
+        .container { background: #1e1e28; padding: 30px; border-radius: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Admin Control Panel</h2>
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger mb-4">Logout</a>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h3 class="mt-4">Pending Deposits</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dep in deposits %}
+            <tr>
+                <td>{{ dep.user_mobile }}</td>
+                <td>GHS {{ dep.amount|floatformat:2 }}</td>
+                <td>{{ dep.timestamp|date:"d M Y, H:i" }}</td>
+                <td>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="deposit_id" value="{{ dep.id }}">
+                        <button name="action" value="approve_dep" class="btn btn-success btn-sm">Approve</button>
+                        <button name="action" value="reject_dep" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">No pending deposits.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-5">Pending Withdrawals</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for with in withdrawals %}
+            <tr>
+                <td>{{ with.user_mobile }}</td>
+                <td>GHS {{ with.amount|floatformat:2 }}</td>
+                <td>{{ with.timestamp|date:"d M Y, H:i" }}</td>
+                <td>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="withdraw_id" value="{{ with.id }}">
+                        <button name="action" value="approve_with" class="btn btn-success btn-sm">Approve</button>
+                        <button name="action" value="reject_with" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">No pending withdrawals.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

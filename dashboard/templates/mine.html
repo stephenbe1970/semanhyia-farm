@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-white mb-4">Mine</h2>
+
+<div class="card bg-success text-white p-4 shadow-sm border-0 mb-4">
+    <div class="mb-3">
+        <p class="small mb-0 opacity-75">Phone number</p>
+        <h5 class="fw-bold">{{ user.mobile }}</h5>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <p class="small mb-0 opacity-75">Total Accumulated</p>
+            <h6 class="fw-bold">GHS {{ total_accumulated|floatformat:2 }}</h6>
+        </div>
+        <div class="col-6 text-end">
+            <p class="small mb-0 opacity-75">Account balance</p>
+            <h6 class="fw-bold">GHS {{ balance|floatformat:2 }}</h6>
+        </div>
+    </div>
+</div>
+
+<div class="row g-2 mb-4">
+    <div class="col-6">
+        <a href="{% url 'recharge' %}" class="btn btn-success w-100 py-2 fw-bold shadow-sm">Recharge</a>
+    </div>
+    <div class="col-6">
+        <a href="{% url 'withdraw' %}" class="btn btn-success w-100 py-2 fw-bold shadow-sm">Withdraw</a>
+    </div>
+</div>
+
+<div class="list-group list-group-flush mb-4 bg-transparent">
+    <a href="{% url 'account_records' %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-25 px-0 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-file-earmark-text me-3"></i>Account records</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+    </a>
+    <a href="{% url 'bank_management' %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-25 px-0 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-bank me-3"></i>Bank account management</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+    </a>
+    <a href="{% url 'about_us' %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-25 px-0 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-info-circle me-3"></i>About Us</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+    </a>
+    <a href="{% url 'platform_rules' %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-25 px-0 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-shield-check me-3"></i>Platform rules</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+    </a>
+    <a href="{% url 'customer_service' %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-25 px-0 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-headset me-3"></i>Customer service</span>
+        <i class="bi bi-chevron-right text-secondary"></i>
+    </a>
+</div>
+
+<div class="mt-auto pb-4">
+    <a href="{% url 'logout' %}" class="btn btn-outline-success w-100">Secure exit</a>
+</div>
+
+{% endblock %}
