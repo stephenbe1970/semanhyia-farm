@@ -1,3 +1,5 @@
-streamlit
+django
+gunicorn
+whitenoise
 pandas
 Pillow
